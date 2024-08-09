@@ -1,0 +1,94 @@
+ASA Version 8.0(2) 
+!
+command-alias exec wrme copy /noconfirm  run disk0:/.private/startup-config
+hostname ciscoasa
+enable password 8Ry2YjIyt7RRXU24 encrypted
+names
+!
+interface Ethernet0/0
+ nameif outside
+ security-level 0
+ ip address 1.1.1.254 255.255.255.0 
+!
+interface Ethernet0/1
+ nameif inside
+ security-level 100
+ ip address 10.0.0.254 255.255.255.0 
+!
+interface Ethernet0/2
+ nameif dmz
+ security-level 50
+ ip address 172.16.1.254 255.255.255.0 
+!
+interface Ethernet0/3
+ nameif Management
+ security-level 100
+ ip address 192.168.1.3 255.255.255.0 
+ management-only
+!
+interface Ethernet0/4
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface Ethernet0/5
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+passwd 2KFQnbNIdI.2KYOU encrypted
+ftp mode passive
+access-list OUTSIDE-IN extended permit icmp any any 
+access-list DMZ-IN extended permit icmp any any 
+access-list POLICY-NAT-ACL2 extended permit ip 10.0.0.0 255.255.255.0 host 2.2.2.2 
+access-list POLICY-NAT-ACL3 extended permit ip 10.0.0.0 255.255.255.0 host 3.3.3.3 
+pager lines 24
+mtu outside 1500
+mtu inside 1500
+mtu dmz 1500
+mtu Management 1500
+no failover
+icmp unreachable rate-limit 1 burst-size 1
+asdm image disk0:/asdm-647.bin
+no asdm history enable
+arp timeout 14400
+global (outside) 1 interface
+global (outside) 2 1.1.1.2
+global (outside) 3 1.1.1.3
+nat (inside) 2 access-list POLICY-NAT-ACL2
+nat (inside) 3 access-list POLICY-NAT-ACL3
+nat (inside) 1 10.0.0.0 255.255.255.0
+access-group OUTSIDE-IN in interface outside
+access-group DMZ-IN in interface dmz
+!
+router rip
+ network 1.0.0.0
+ network 10.0.0.0
+ network 172.16.0.0
+ version 2
+ no auto-summary
+!             
+timeout xlate 3:00:00
+timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02
+timeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00
+timeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00
+timeout uauth 0:05:00 absolute
+dynamic-access-policy-record DfltAccessPolicy
+http server enable
+http 192.168.1.0 255.255.255.0 Management
+no snmp-server location
+no snmp-server contact
+snmp-server enable traps snmp authentication linkup linkdown coldstart
+no crypto isakmp nat-traversal
+telnet timeout 5
+ssh timeout 5
+console timeout 0
+threat-detection basic-threat
+threat-detection statistics access-list
+!
+!
+prompt hostname context 
+Cryptochecksum:e87fae61f3ff2ac45ab0da60ecd745c3
+: end

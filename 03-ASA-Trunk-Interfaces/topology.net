@@ -1,0 +1,181 @@
+autostart = False
+version = 0.8.4
+[qemu 127.0.0.1:10525]
+    workingdir = qemu-flash-drives
+    udp = 40000
+    [[5520]]
+        ram = 512
+        netcard = e1000
+        options = -cpu coreduo -icount auto
+        initrd = C:\LearnCisco\images\asa842-initrd.gz
+        kernel = C:\LearnCisco\images\asa842-vmlinuz
+        kernel_cmdline = ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 console=ttyS0,9600n8 bigphysarea=65536 auto nousb ide1=noprobe hda=980,16,32
+    [[ASA ASA1]]
+        e0 = SW1 f1/10
+        e1 = SW1 f1/11
+        e2 = SW1 f1/12
+        e3 = SW1 f1/13
+        x = -20.0
+        y = 156.0
+        z = 1.0
+        hx = 10.0
+        hy = 47.0
+[127.0.0.1:7200]
+    workingdir = working
+    udp = 10000
+    [[3725]]
+        image = C:\LearnCisco\images\c3725-adventerprisek9-mz.124-15.T14.image
+        ram = 256
+        idlepc = 0x6026be14
+        ghostios = True
+    [[ROUTER SW1]]
+        model = 3725
+        console = 2001
+        aux = 2501
+        cnfg = configs\SW1.cfg
+        slot1 = NM-16ESW
+        f1/1 = R1 f0/0
+        f1/2 = R2 f0/0
+        f1/3 = R3 f0/0
+        f1/10 = ASA1 e0
+        f1/11 = ASA1 e1
+        f1/12 = ASA1 e2
+        f1/13 = ASA1 e3
+        symbol = EtherSwitch router
+        x = -13.5
+        y = -2.0
+        z = 1.0
+        hx = -12.0
+        hy = -38.0
+    [[ROUTER R1]]
+        model = 3725
+        console = 2003
+        aux = 2503
+        cnfg = configs\R1.cfg
+        f0/0 = SW1 f1/1
+        x = -216.0
+        y = -2.0
+        z = 1.0
+[127.0.0.1:7201]
+    workingdir = working
+    udp = 10100
+    [[3725]]
+        image = C:\LearnCisco\images\c3725-adventerprisek9-mz.124-15.T14.image
+        ram = 256
+        idlepc = 0x6026be14
+        ghostios = True
+    [[ROUTER R2]]
+        model = 3725
+        console = 2006
+        aux = 2506
+        cnfg = configs\R2.cfg
+        f0/0 = SW1 f1/2
+        x = 172.0
+        y = 0.0
+        z = 1.0
+    [[ROUTER R3]]
+        model = 3725
+        console = 2005
+        aux = 2505
+        cnfg = configs\R3.cfg
+        f0/0 = SW1 f1/3
+        x = -21.0
+        y = -133.0
+        z = 1.0
+[GNS3-DATA]
+    configs = configs
+    workdir = working
+    [[NOTE 1]]
+        text = "DMZ"
+        x = -5.0
+        y = -220.0
+    [[NOTE 2]]
+        text = "802.1Q TRUNK:\n      VLAN 10 - LAN\n      VLAN 20 - ISP\n      VLAN 30 - DMZ"
+        x = 54.0
+        y = 102.0
+    [[NOTE 3]]
+        text = "172.16.1.0/24"
+        x = -36.0
+        y = -187.0
+    [[NOTE 4]]
+        text = "VLAN 10"
+        x = -290.0
+        y = 16.0
+    [[NOTE 5]]
+        text = "VLAN 30"
+        x = -18.0
+        y = -206.0
+    [[NOTE 6]]
+        text = "192.168.1.0/24"
+        x = -213.0
+        y = 54.0
+    [[NOTE 7]]
+        text = "VLAN 20"
+        x = 249.0
+        y = 16.0
+    [[NOTE 8]]
+        text = "10.0.0.0/24"
+        x = 141.0
+        y = 60.0
+    [[NOTE 9]]
+        text = "LAN"
+        x = -278.0
+        y = 3.0
+    [[NOTE 10]]
+        text = ".2"
+        x = -151.0
+        y = 21.0
+    [[NOTE 11]]
+        text = ".2"
+        x = 150.0
+        y = 24.0
+    [[NOTE 12]]
+        text = ".2"
+        x = 20.0
+        y = -94.0
+    [[NOTE 13]]
+        text = ".1"
+        x = 50.0
+        y = 163.0
+    [[NOTE 14]]
+        text = "ISP"
+        x = 262.0
+        y = 2.0
+    [[NOTE 15]]
+        text = "             ASA/PIX\nЛогические интерфейсы"
+        x = -280.0
+        y = -187.0
+    [[SHAPE 1]]
+        type = ellipse
+        x = -9.0
+        y = 105.0
+        width = 48.0
+        height = 21.0
+        border_style = 2
+    [[SHAPE 2]]
+        type = ellipse
+        x = 30.0
+        y = -63.0
+        width = 309.0
+        height = 158.0
+        fill_color = "#ffaa7f"
+        border_style = 2
+        z = -1.0
+    [[SHAPE 3]]
+        type = ellipse
+        x = -57.0
+        y = -225.0
+        width = 138.0
+        height = 221.0
+        fill_color = "#55aaff"
+        border_style = 2
+        z = -1.0
+    [[SHAPE 4]]
+        type = ellipse
+        x = -315.0
+        y = -62.0
+        width = 309.0
+        height = 154.0
+        fill_color = "#55ff7f"
+        border_style = 2
+        z = -1.0

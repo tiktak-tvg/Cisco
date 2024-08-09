@@ -1,0 +1,123 @@
+ASA Version 8.4(2) 
+!
+hostname ciscoasa
+enable password 8Ry2YjIyt7RRXU24 encrypted
+passwd 2KFQnbNIdI.2KYOU encrypted
+names
+!
+interface GigabitEthernet0
+ description trunk to SW1
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0.10
+ description LAN
+ vlan 10
+ nameif inside
+ security-level 100
+ ip address 192.168.1.1 255.255.255.0 
+!
+interface GigabitEthernet0.20
+ description ISP
+ vlan 20
+ nameif outside
+ security-level 0
+ ip address 10.0.0.1 255.255.255.0 
+!
+interface GigabitEthernet0.30
+ description DMZ
+ vlan 30
+ nameif dmz
+ security-level 50
+ ip address 172.16.1.1 255.255.255.0 
+!
+interface GigabitEthernet1
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet2
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet3
+ shutdown     
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet4
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet5
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+ftp mode passive
+pager lines 24
+mtu inside 1500
+mtu outside 1500
+mtu dmz 1500
+icmp unreachable rate-limit 1 burst-size 1
+no asdm history enable
+arp timeout 14400
+timeout xlate 3:00:00
+timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02
+timeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00
+timeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00
+timeout sip-provisional-media 0:02:00 uauth 0:05:00 absolute
+timeout tcp-proxy-reassembly 0:01:00
+timeout floating-conn 0:00:00
+dynamic-access-policy-record DfltAccessPolicy
+user-identity default-domain LOCAL
+no snmp-server location
+no snmp-server contact
+snmp-server enable traps snmp authentication linkup linkdown coldstart warmstart
+telnet timeout 5
+ssh timeout 5
+console timeout 0
+threat-detection basic-threat
+threat-detection statistics access-list
+no threat-detection statistics tcp-intercept
+!
+class-map inspection_default
+ match default-inspection-traffic
+!
+!
+policy-map type inspect dns preset_dns_map
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+policy-map global_policy
+ class inspection_default
+  inspect dns preset_dns_map 
+  inspect ftp 
+  inspect h323 h225 
+  inspect h323 ras 
+  inspect rsh 
+  inspect rtsp 
+  inspect esmtp 
+  inspect sqlnet 
+  inspect skinny  
+  inspect sunrpc 
+  inspect xdmcp 
+  inspect sip  
+  inspect netbios 
+  inspect tftp 
+  inspect ip-options 
+!
+service-policy global_policy global
+prompt hostname context 
+no call-home reporting anonymous
+crashinfo save disable
+Cryptochecksum:322d138ef810b1952b7944c02d6962cd
+: end
