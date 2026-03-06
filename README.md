@@ -1,7 +1,6 @@
 ### Базовая конфигурация Cisco Catalyst
 
-Базовая конфигурация Cisco Catalyst 2950/2960 в качестве подготовки для последующей
-индивидуальной настройки.
+Базовая конфигурация Cisco Catalyst 2950/2960 в качестве подготовки для последующей индивидуальной настройки.
 
 #### Подключаемся к устройству:
 ```bash
@@ -47,8 +46,7 @@ switch(config)# logging on
 switch(config)# access-list 11 permit host ip.snmp0.server
 switch(config)# access-list 11 permit host ip.snmp1.server
 ```
-##### Описываем базовые параметры (ключевое слово, уровень доступа, "лист
-доступа")
+##### Описываем базовые параметры (ключевое слово, уровень доступа, "лист доступа")
 ```bash
 switch(config)# snmp-server community password ro 11
 ```
@@ -65,8 +63,7 @@ switch(config)# ip name-server ip.ns0.server
 switch(config)# ip name-server ip.ns1.server
 switch(config)# ip domain-lookup
 ```
-#### Генерируем RSA ключи для подключения к устройству по протоколу SSH и описываем параметры
-работы транспорта:
+#### Генерируем RSA ключи для подключения к устройству по протоколу SSH и описываем параметры работы транспорта:
 ##### Проверяем, нет ли у нас уже ключей
 ```bash
 switch# show crypto key mypubkey rsa
@@ -75,8 +72,7 @@ switch# show crypto key mypubkey rsa
 ```bash
 switch(config)# crypto key zeroize rsa
 ```
-##### Генерируем RSA ключ (в процессе он будет именован как:
-hostname.domain.name) общий для всех функций устройства
+##### Генерируем RSA ключ (в процессе он будет именован как: hostname.domain.name) общий для всех функций устройства
 ```bash
 switch(config)# crypto key generate rsa modulus 1024
 ```
@@ -89,11 +85,7 @@ switch(config)# ip ssh version 2
 switch(config)# ip ssh time-out 120
 ```
 #### Устанавливаем параметры аутентификации:
-##### Отключаем "продвинутую" модель аутентификации, оставляя, тем самым,
-простейший вариант с локальной аутентификацией по файлу паролей (Особое
-внимание следует уделить переключению между режимами аутентификации. Если
-некорректно переключится в режим "продвинутой" модели аутентификации "AAA",
-то запросто можно потерять доступ к устройству даже на консольном порту)
+##### Отключаем "продвинутую" модель аутентификации, оставляя, тем самым, простейший вариант с локальной аутентификацией по файлу паролей (Особое внимание следует уделить переключению между режимами аутентификации. Если некорректно переключится в режим "продвинутой" модели аутентификации "AAA", то запросто можно потерять доступ к устройству даже на консольном порту)
 ```bash
 switch(config)# no aaa new-model
 ```
@@ -105,8 +97,7 @@ switch(config)# service password-encryption
 ```bash
 switch(config)# enable secret cisco
 ```
-##### Регистрируем пользователя "cisco" c паролем "cisco" c привелегиями,
-практически равным суперпользователю
+##### Регистрируем пользователя "cisco" c паролем "cisco" c привелегиями, практически равным суперпользователю
 ```bash
 switch(config)# username cisco privilege 15 password 0 cisco
 ```
@@ -114,12 +105,11 @@ switch(config)# username cisco privilege 15 password 0 cisco
 ```bash
 switch(config)# no username cisco
 ```
-Описываем конфигурацию консольного последовательного терминального порта:
+#### Описываем конфигурацию консольного последовательного терминального порта:
 ```bash
 switch(config)# line console 0
 ```
-##### Устанавливаем время отключения сессии в тридцать минут для неспешной
-работы
+##### Устанавливаем время отключения сессии в тридцать минут для неспешной работы
 ```bash
 switch(config-line)# exec-timeout 30
 switch(config-line)# logging synchronous
@@ -138,8 +128,7 @@ switch(config-line)# exec-timeout 10
 switch(config-line)# logging synchronous
 switch(config-line)# login local
 ```
-##### Указываем на применение только одного вида транспортного протокола из
-всех возможных
+##### Указываем на применение только одного вида транспортного протокола из всех возможных
 ```bash
 switch(config-line)# transport input ssh
 switch(config-line)# history size 100
