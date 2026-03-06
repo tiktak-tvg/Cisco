@@ -1,0 +1,46 @@
+
+aaa new-model
+aaa authentication login default local
+Server_VPN(config)#aaa authentication login USER local
+Server_VPN(config)#aaa authorization network GROUP local
+Server_VPN(config)#ip local pool EZVPN_POOL 10.0.0.10 10.0.0.20
+Server_VPN(config)#username bob password marley
+Server_VPN(config)#crypto isakmp policy 1
+Server_VPN(config-isakmp)#authentication pre-share
+Server_VPN(config-isakmp)#encryption aes
+Server_VPN(config-isakmp)#hash sha
+Server_VPN(config-isakmp)#group 2
+Server_VPN(config-isakmp)#life 7200
+Server_VPN(config-isakmp)#exit
+Server_VPN(config)#crypto isakmp key 0 Cisco address 0.0.0.0 0.0.0.0
+Server_VPN(config)#crypto ipsec transform-set EZVPN_SET esp-aes esp-sha-hmac
+Server_VPN(cfg-crypto-trans)#exit
+Server_VPN(config)#crypt
+Server_VPN(config)#crypto is
+Server_VPN(config)#crypto isakmp cli
+Server_VPN(config)#crypto isakmp client con
+Server_VPN(config)#crypto isakmp client configuration add
+Server_VPN(config)#crypto isakmp client configuration address-pool pool local EZVPN_POOL
+Server_VPN(config)#crypto isakmp client configuration group EZVPN
+Server_VPN(config-isakmp-group)#pool EZVPN_POOL
+Server_VPN(config-isakmp-group)#netmask 255.255.255.0
+Server_VPN(config-isakmp-group)#dns 4.2.2.2
+Server_VPN(config-isakmp-group)#key Cisco123
+Server_VPN(config-isakmp-group)#exit
+Server_VPN(config)#crypto isakmp profile EZVPN_PROFILE
+Server_VPN(conf-isa-prof)#match identity group EZVPN
+Server_VPN(conf-isa-prof)#client configuration address respond
+Server_VPN(conf-isa-prof)#client authentication list USER
+Server_VPN(conf-isa-prof)#isakmp authorization list GROUP
+Server_VPN(conf-isa-prof)#virtual-template 1
+Server_VPN(conf-isa-prof)#exit
+Server_VPN(config)#crypto ipsec profile EZVPN_PROFILE
+Server_VPN(ipsec-profile)#set transform-set EZVPN_SET
+Server_VPN(ipsec-profile)#set isakmp-profile EZVPN_PROFILE
+Server_VPN(ipsec-profile)#exit
+Server_VPN(config)#int virtual-template 1 type tunnel
+Server_VPN(config-if)#ip unnumbered fastEthernet 0/1
+Server_VPN(config-if)#tunnel mode ipsec ipv4
+Server_VPN(config-if)#tunnel path-mtu-discovery
+Server_VPN(config-if)#tunnel protection ipsec profile EZVPN_PROFILE
+

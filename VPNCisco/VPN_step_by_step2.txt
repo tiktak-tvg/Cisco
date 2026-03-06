@@ -1,0 +1,40 @@
+
+aaa new-model
+aaa authentication login default local
+aaa authentication login USER local
+aaa authorization network GROUP local
+ip local pool EZVPN_POOL 10.0.0.10 10.0.0.20
+username bob password marley
+crypto isakmp policy 1
+authentication pre-share
+encryption aes
+hash sha
+group 2
+life 7200
+exit
+crypto isakmp key 0 Cisco address 0.0.0.0 0.0.0.0
+crypto ipsec transform-set EZVPN_SET esp-aes esp-sha-hmac
+exit
+crypto isakmp client configuration address-pool local EZVPN_POOL
+crypto isakmp client configuration group EZVPN
+pool EZVPN_POOL
+netmask 255.255.255.0
+dns 4.2.2.2
+key Cisco123
+exit
+crypto isakmp profile EZVPN_PROFILE
+match identity group EZVPN
+client authentication list USER
+isakmp authorization list GROUP
+virtual-template 1
+exit
+crypto ipsec profile EZVPN_PROFILE
+set transform-set EZVPN_SET
+set isakmp-profile EZVPN_PROFILE
+exit
+int virtual-template 1 type tunnel
+ip unnumbered fastEthernet 0/1
+tunnel mode ipsec ipv4
+tunnel path-mtu-discovery
+tunnel protection ipsec profile EZVPN_PROFILE
+

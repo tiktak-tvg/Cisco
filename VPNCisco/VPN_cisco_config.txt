@@ -1,0 +1,149 @@
+Current configuration : 2021 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Server_VPN
+!
+boot-start-marker
+boot-end-marker
+!
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authentication login USER local
+aaa authorization network GROUP local
+!
+!
+aaa session-id common
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+!
+!
+no ip domain lookup
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username bob password 0 marley
+archive
+ log config
+  hidekeys
+!
+!
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 2
+ lifetime 7200
+crypto isakmp key Cisco address 0.0.0.0 0.0.0.0
+crypto isakmp client configuration address-pool local EZVPN_POOL
+!
+crypto isakmp client configuration group EZVPN
+ key Cisco123
+ dns 4.2.2.2
+ pool EZVPN_POOL
+ netmask 255.255.255.0
+crypto isakmp profile EZVPN_PROFILE
+   match identity group EZVPN
+   client authentication list USER
+   isakmp authorization list GROUP
+   client configuration address respond
+   virtual-template 1
+!
+!
+crypto ipsec transform-set EZVPN_SET esp-aes esp-sha-hmac
+!
+crypto ipsec profile EZVPN_PROFILE
+ set transform-set EZVPN_SET
+ set isakmp-profile EZVPN_PROFILE
+!
+!
+!
+!
+ip tcp synwait-time 5
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 172.16.1.100 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface Virtual-Template1 type tunnel
+ ip unnumbered FastEthernet0/1
+ tunnel mode ipsec ipv4
+ tunnel path-mtu-discovery
+ tunnel protection ipsec profile EZVPN_PROFILE
+!
+ip local pool EZVPN_POOL 10.0.0.10 10.0.0.20
+ip forward-protocol nd
+ip route 0.0.0.0 0.0.0.0 172.16.1.200
+!
+!
+no ip http server
+no ip http secure-server
+!
+no cdp log mismatch duplex
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+!
+!
+end
